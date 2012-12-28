@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<tal:block xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal" metal:define-macro="tabs-views">
+
+<!-- <canvas id="canvas" width="1000px" height="600px"></canvas> -->
+
+<div id="tabs-views" class="tabbable">
+  <ul class="nav nav-tabs" id="tool-tabs-views">
+    <li class="active"><a href="#disp" data-toggle="tab">Disposição</a></li>
+    <li><a href="#3d" data-toggle="tab">3D</a></li>
+    <li><a href="#img" data-toggle="tab">Foto</a></li>
+  </ul>
+  
+  <div class="tab-content containment">
+    <canvas id="draw_grid" style="position: absolute;" width="800" height="600"></canvas>
+    <div class="tab-pane active" id="disp" style="width: 800px;height:600px;">
+      <tal:block metal:use-macro="edit_item"></tal:block>
+    </div>
+    
+    
+    <div class="tab-pane" id="tab2">
+      <p>Howdy, I'm in Section 2.</p>
+    </div>
+  </div>  
+
+</div>
+
+<script type="text/javascript">
+
+$(function(){
+  var ctx = $("#draw_grid")[0].getContext('2d')
+  var width = 800, height=600
+  ctx.beginPath()
+  for (x=0; x<=width; x+=20){
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, height)
+  }
+  for (y=0; y<=height; y+=20){
+      ctx.moveTo(0, y)
+      ctx.lineTo(width, y)
+  }
+  ctx.strokeStyle = "#cccccc";
+  ctx.stroke()
+  $(".draggable").draggable({ containment: "#disp", scroll: false , grid: [ 20,20 ] })
+  
+  .bind( "dragstop", function(event, ui){
+    var $thisposition = $(event.target).position(),
+        $parentposition = $(event.target).parent().position()
+    editItem.update_item({
+                          left: parseInt($(event.target).css('left').replace(/\D/g, '')),
+                          top:  parseInt($(event.target).css('top').replace(/\D/g, ''))
+                          })
+  })
+
+  .bind("resizestop", function(event, ui){
+    var $this = $(this)
+    editItem.update_item({width: $this.width(), height: $this.height()})
+  })
+  
+  $(".draggable").bind( "mousedown", function(event){
+    var $target = $(event.target).parent('div'),
+        name = $target.attr('data-name'),
+        found_item = select_list.find_item(name)
+        if (found_item){
+          found_item.click()
+        }
+  })
+  
+  $(".draggable").each(function(k,v){
+    var $item = $(v)
+    $item.resizable({aspectRatio: parseFloat($item.attr('data-ratio')),
+                    grid: 20,
+                    maxWidth: width-20})
+  });
+})
+</script>
+
+
+</tal:block>

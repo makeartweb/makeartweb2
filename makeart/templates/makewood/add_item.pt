@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<tal:block xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal" metal:define-macro="panel_add_item">
+
+<div id="panel_add_item">
+  <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+      Adicionar
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="#" id="add_text" class="link-add-item"><i class="icon-font"></i> Texto</a></li>
+      <li><a href="#" id="add_svg" class="link-add-item"><i class="icon-pencil"></i> Enviar SVG</a></li>
+      <li><a href="#" id="add_clipart" class="link-add-item"><i class="icon-leaf"></i> ClipArt</a></li>
+    </ul>
+    <a id="tool-btn-edit-item" class="btn disabled"  href="#"><i class="icon-edit"></i> Editar</a>
+    <a id="tool-btn-remove-item" class="btn disabled"  href="#"><i class="icon-remove"></i> Apagar</a>
+  </div>
+
+
+  <br/>
+  <form class="form-inline" name="form_edit_items">
+  <div id="edit-items">
+    
+    <div class="hide" id="item-edit-text">
+      <label>Editar texto </label><br/>
+      <input type="text" placeholder="MakeWood" name="text_item"/>
+      <button type="button" class="btn btn-success btn-add-item" >Adicionar</button>
+      <button type="button" class="btn btn-cancel-add-item" >Cancelar</button>
+    </div>
+    
+    <div class="hide" id="item-edit-svg" >
+      <label>Editar SVG </label><br/>
+      <input type="file" />
+      <button type="button"  class="btn btn-success">Adicionar</button>
+    </div>
+  
+  </div>
+  </form>
+  
+  
+  <ul class="nav nav-list nav-stacked" style="overflow: scroll; height: 100%;" id="list-items">
+    <tal:block metal:use-macro="sorted_items"></tal:block>
+  </ul>
+  
+  
+</div>
+
+<script type="text/javascript">
+function EditItem(){
+  var edit_item = this
+  this.update_item = function(json_data){
+    
+    $.getJSON(resource_url + select_list.value + '/set-item',
+              {data: JSON.stringify(json_data)},
+              function(data){
+                if (data.success){
+                  var item = select_list.find_item(select_list.value)
+                  item.find('img').eq(0).attr('src', data.font_url + "draw-text?text={0}&size=20&color={1}".format(data.item.name, data.item.color))
+                  var item_move = $('.draggable#move-' + select_list.value)
+                  item_move.attr('data-ratio', data.ratio)
+                  item_move.css('height', data.height)
+                  item_move.find('img').eq(0).attr('src', data.font_url + "raster-text?text={0}&color={1}".format(data.item.name, data.item.color))
+                }
+              }
+            )
+  }
+}
+
+
+function AddItem(){
+  var add_item = this
+
+  this.init = function(el_edit_items){
+    this.el_edit_items= el_edit_items
+  }
+
+  this.add_text = function(caller, evt ){
+    this.el_edit_items.find('div').hide()
+    $('#item-edit-text').show()
+  }
+
+  this.add_svg = function(caller, evt ){
+    this.el_edit_items.find('div').hide()
+    $('#item-edit-svg').show()
+  }
+  
+  this.create_text = function(caller, evt){
+    var text = $('input[name=text_item]').val()
+    $.getJSON(url_create_item, {text: text}, function(data){
+      if (data.success){
+        $('#list-items li').remove()
+        $('#list-items').load(resource_url + 'menu-sorted-items', function(){
+          select_list.init('#list-items')
+        })
+      }
+    })
+    $('#item-edit-text').hide()
+  }
+
+}
+
+var addItem = new AddItem()
+var editItem = new EditItem()
+var select_list = new ListSelect()
+
+var resource_url = "${request.resource_url(context)}"
+var url_create_text_image = "${request.resource_url(fonts[1], 'draw-text')}"
+var url_create_item = "${request.resource_url(context, 'create-item')}"
+var url_edit_order_key= "${request.resource_url(context, 'edit-order-key')}"
+
+$(function(){
+  
+  addItem.init($('#edit-items'))
+  select_list.init('#list-items')
+  $('#list-items').sortable()
+  $('#list-items').disableSelection()
+  $('#list-items').sortable({update: function(event, ui){
+    var array = new Array()
+    $(this).find('li a').map(function(i, v){array.push($(v).attr('data-value'))})
+    $.getJSON(url_edit_order_key,{sort: array.join(';')})
+  }})
+  
+  select_list.change(function(){
+    if (select_list.value){
+      $("#tool-btn-edit-item").removeClass('disabled')
+      $("#tool-btn-remove-item").removeClass('disabled')
+      $('#content-edit-item').hide().load(resource_url + select_list.value + '/get-page-edit', function(){$(this).slideDown("fast")})
+    }
+    else{
+      $("#tool-btn-edit-item").addClass('disabled')
+      $("#tool-btn-remove-item").addClass('disabled')
+    }
+  })
+  
+  $('#tool-btn-remove-item').click(function(evt){
+    $.getJSON(resource_url + '/' + select_list.value + '/remove-item', function(data){
+      if (data.success){
+        select_list.remove_select_item()
+      }
+    })
+  })
+  $('#add_text').click( function(evt){addItem.add_text.apply(addItem, [ this, evt ])} )
+  $('#add_svg' ).click( function(evt){addItem.add_svg.apply(addItem, [ this, evt ])} )
+  
+  $('.btn-add-item').click( function(evt){addItem.create_text.apply(addItem, [ this, evt ])} )
+  $('.btn-cancel-add-item').click( function(evt){$('#item-edit-text').hide()} )
+  //$('#add_clipart' ).click( function(evt){addItem.add_clipart.apply(addItem, [ this, evt ])} )
+
+})
+
+
+</script>
+
+
+
+
+</tal:block>

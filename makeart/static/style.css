@@ -1,0 +1,12 @@
+[class*="span"] {
+    float: left;
+    margin-left: 45px;
+}
+
+.containment{
+    overflow: hidden;
+}
+
+.rounded{
+    border: 1px solid black;
+}

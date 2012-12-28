@@ -1,0 +1,13 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<tal:block xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal" metal:define-macro="edit_item_view">
+<tal:block tal:repeat="item context.get_sorted_items()">
+  <div style="width: ${int(item.width or 10)}px; height: ${int(item.height or 10)}px; left: ${item.left}px; top: ${item.top}px;" class="draggable rounded" data-name="${item.__name__}" data-ratio="${item.ratio or 1}" id="move-${item.__name__}">
+    <img src="${request.resource_url(item.get_font() or request.root['fonts'].values()[0], 'raster-text')}?text=${item.name}&color=${item.color}"  />
+  </div>
+</tal:block>
+</tal:block>
+
+

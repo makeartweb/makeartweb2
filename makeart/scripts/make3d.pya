@@ -1,0 +1,98 @@
+import bpy
+from mathutils import Vector
+import mathutils
+import math
+points_1d = [(-5.0, 5.0), (5.0, 5.0), (5.0, -5.0), (-5.0, -5.0)]
+edges = [[0, 1], [1, 2], [2, 3], [3, 0]]
+#mesh = bpy.data.meshes[0]
+#mesh = bpy.data.meshes.new("Pyramid")
+#
+#first_z = 0
+#
+#vertice = lambda v: Vector((float(v[0]), float(v[1]), float(first_z))) 
+#
+#mesh.from_pydata(vertices=[vertice(p_1d) for p_1d in points_1d],
+#                 edges=edges,
+#                 faces=[])
+#
+#ob = bpy.data.objects.new("Pyramid", mesh)
+#scn = bpy.data.scenes[0]
+#base = scn.objects.link(ob)
+
+def create_pyramid(base, angle):
+    z_range = range(0, 100) #resolution
+    
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_name(name="Pyramid")
+    bpy.ops.object.mode_set(mode="EDIT")
+    
+    b = base # 10.0
+    a = math.tan(math.radians(angle)) #45.0
+    
+    h = b*a/(len(z_range)*2)
+
+    for z in z_range:
+        bpy.ops.mesh.extrude()
+        bpy.ops.transform.translate(value=(0.0, 0.0, h))
+    
+        k = b - 2*( h/a )
+        s = k / b
+        b = k
+    
+        bpy.ops.transform.resize(value=(s, s, 1.0), constraint_axis=(True, True, False))
+        mesh.update()
+
+def get_x_of_circle(r, y):
+    x = (r**2 - y**2)**(0.5)
+    return x
+    
+def create_pyramid_circle(base):
+    z_range = range(0, 100) #resolution
+    
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_name(name="pezinho")
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action='TOGGLE')
+
+    raio = base/4.0
+    b = base
+    h = raio/(len(z_range))
+
+    for z in z_range:
+        bpy.ops.mesh.extrude()
+        bpy.ops.transform.translate(value=(0.0, 0.0, h))
+    
+        
+        #k = b - 2*( h/a )
+        k = 2*get_x_of_circle(raio, h*z)
+        s = k / b
+        print (k, s, z, h)
+        b = k
+        #print (k, z)
+        
+        
+    
+        bpy.ops.transform.resize(value=(s, s, 1.0), constraint_axis=(True, True, False))
+        mesh.update()
+    
+    
+#create_pyramid_circle(7.0)
+
+from io_curve_svg import import_svg
+file_svg = cStringIO.StringIO()
+
+import_svg.load_svg(file_svg)
+
+bpy.ops.object.select_name(name="pezinho")
+bpy.ops.object.convert(target='MESH', keep_original=False)
+
+bpy.ops.object.select_name(name="contorno")
+bpy.ops.object.convert(target='MESH', keep_original=False)
+
+#bpy.ops.object.editmode_toggle()
+#bpy.ops.mesh.select_all(action='TOGGLE')
+#bpy.ops.mesh.subdivide(number_cuts=1, smoothness=0, fractal=0, corner_cut_pattern='INNER_VERTEX')
+
+
+bpy.ops.wm.save_mainfile(filepath="/home/leandro/env3/make3d/make3d4.blend" )
+

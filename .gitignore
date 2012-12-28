@@ -1,0 +1,14 @@
+*.fs*
+*.log
+*.pyc
+makeart/uploads/*
+makeart/tmp/*
+makeart/static/bootstrap/*
+makeart/static/jquery.svg/*
+makeart/static/jquery.ui/*
+makeart/static/jquery/*
+makeart/static/jscolor/*
+makeart/static/*.js
+makeart/static/js/*
+makeart/static/css/*
+makeart/fonts/*

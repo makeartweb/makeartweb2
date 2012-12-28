@@ -1,0 +1,10 @@
+from PIL import Image, ImageFont, ImageDraw
+# use a truetype font
+font = ImageFont.truetype("./fonts/ADDLN.TTF", 250)
+text = "world11"
+
+image = Image.new("L", font.getsize(text), 'white')
+draw = ImageDraw.Draw(image)
+
+draw.text((0, 0), text, font=font)
+image.save('teste.gif')

@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+<div metal:use-macro="master">
+<!-- gerenciar dependencias js da pagina -->
+<tal:block metal:fill-slot="js-include-begin">
+  <!-- para cada dependencia addicionar um script -->
+  <script src="/static/js/panels.js" ></script>
+  <script src="/static/jquery.ui/jquery-ui-1.8.23.custom.min.js" ></script>
+  <script src="/static/jquery.svg/jquery.svg.js" ></script>
+  <script src="/static/js/json2.js" ></script>
+  <style type="text/css">@import "/static/jquery.svg/jquery.svg.css";</style>
+  
+  <script type="text/javascript" src="/static/rgbcolor.js"></script> 
+  <script type="text/javascript" src="/static/canvg.js"></script>
+
+  <!-- end-->
+</tal:block>
+
+<div metal:fill-slot="content-main" >
+  
+  <div class="container-fluid">
+  <div class="row-fluid">
+      <div class="span4">
+          <tal:block tal:define="id 2">
+            <tal:block metal:use-macro="panel_add_item"></tal:block>
+          </tal:block>
+          <br/>
+          <div id="content-edit-item"></div>
+      </div>
+
+      <div class="span8">
+        <div class="row">
+          <div class="span12">
+            <tal:block tal:define="id 3">
+              <tal:block metal:use-macro="tabs_views"></tal:block>
+            </tal:block>
+          </div>
+        </div>
+      </div>
+  </div>
+  </div>
+  
+  
+</div>
+</div>
+
+</html>

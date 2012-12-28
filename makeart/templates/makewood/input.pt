@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<tal:block xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal" metal:define-macro="panel_input">
+
+<div id="panel_input">
+  <div class="btn-group">
+    <a class="btn" href="#left" data-toggle="tool-alignment-text-${id}" ><i class="icon-align-left"></i></a>
+    <a class="btn" href="#center" data-toggle="tool-alignment-text-${id}"><i class="icon-align-center"></i></a>
+    <a class="btn" href="#right" data-toggle="tool-alignment-text-${id}"><i class="icon-align-right"></i></a>
+    <a class="btn" href="#justify" data-toggle="tool-alignment-text-${id}"><i class="icon-align-justify"></i></a>
+  </div>
+  <br/>
+  <div id="textarea-editable-${id}" contenteditable="true" style="width: 200px; height: 100px; max-height: 100px; background-color: white; border: 1px solid black;"></div>
+  <br/>
+    <button  id="btn-clear-text-${id}" class="btn-warning">limpar</button>
+    <button  id="btn-confirm-text-${id}" class="btn-info">confirmar</button>
+    <p>
+    <div id="alert-box-letters-${id}" class="alert alert-info hide"></div>
+  </p>
+</div>
+
+
+</tal:block>

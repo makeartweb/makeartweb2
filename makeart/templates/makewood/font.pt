@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<tal:block xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal" metal:define-macro="panel_font">
+
+<div id="panel_font">
+  <div class="btn-group">
+    <input class="color" id="tool-color-picker" value="${context.color}">
+  </div>
+  <ul class="nav nav-list nav-stacked" style="overflow: scroll; height: 200px;" id="tool-font">
+    <li tal:repeat="font fonts"><a href="#${font.__name__}" data-value="${request.resource_path(font)}">${font.name}<br/><img src="${request.resource_url(font, 'draw-text', query={'text': font.name, 'size': 20})}" /></a></li>
+  </ul>
+</div>
+
+<script type="text/javascript">
+var tool_font = new ListSelect()
+var c = new jscolor.color(document.getElementById('tool-color-picker'))
+$(function(){
+  tool_font.init('#tool-font')
+  tool_font.select_item('${context.font}')
+  
+  $('#tool-color-picker').change(function(){
+    editItem.update_item({font: tool_font.value, color: $('#tool-color-picker').val()})
+  })
+  
+  tool_font.change(function(){
+    if (tool_font.value){
+      editItem.update_item({font: tool_font.value, color: $('#tool-color-picker').val()})
+    }
+  })
+})
+</script>
+
+</tal:block>
